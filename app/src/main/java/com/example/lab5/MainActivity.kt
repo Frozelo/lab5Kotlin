@@ -1,47 +1,36 @@
 package com.example.lab5
 
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.lab5.ui.theme.Lab5Theme
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RadioGroup
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Lab5Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        setContentView(R.layout.activity_main)
+
+        val editTextPrice = findViewById<EditText>(R.id.editTextPrice)
+        val radioGroupCurrency = findViewById<RadioGroup>(R.id.radioGroupCurrency)
+        val buttonConvert = findViewById<Button>(R.id.buttonConvert)
+
+        buttonConvert.setOnClickListener {
+            val price = editTextPrice.text.toString().toDoubleOrNull() ?: 0.0
+            val selectedCurrencyId = radioGroupCurrency.checkedRadioButtonId
+            val exchangeRate = when (selectedCurrencyId) {
+                R.id.radioButtonUSD -> 75.0
+                R.id.radioButtonEUR -> 90.0
+                R.id.radioButtonGBP -> 100.0
+                else -> 1.0
             }
+
+            val convertedPrice = price * exchangeRate
+
+            val intent = Intent(this, ResultActivity::class.java)
+            intent.putExtra("CONVERTED_PRICE", convertedPrice)
+            startActivity(intent)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Lab5Theme {
-        Greeting("Android")
     }
 }
